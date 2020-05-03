@@ -352,6 +352,7 @@ export default class App extends React.Component {
         alert(errMsg);
       }
     });
+    Office.context.ui.closeContainer();
   }
 
   render() {
