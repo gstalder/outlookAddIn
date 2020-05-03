@@ -208,9 +208,7 @@ export default class App extends React.Component {
     }
     try {
       console.log(data, typeof data);
-      var date = this.composetDate(data);
-      this.setState({ startDate: date });
-      this.setState({ endDate: date });
+      this.setDate(data);
     } catch (e) {
       if (e instanceof TypeError) {
         printError(e, true);
@@ -220,13 +218,14 @@ export default class App extends React.Component {
     }
   };
 
-  composetDate(date) {
-    var returnDate = this.state.startDate;
-    returnDate.setFullYear(date.getFullYear());
-    returnDate.setMonth(date.getMonth());
-    returnDate.setDate(date.getDate());
-    console.log(returnDate);
-    return returnDate;
+  setDate(date) {
+    this.state.startDate.setFullYear(date.getFullYear());
+    this.state.startDate.setMonth(date.getMonth());
+    this.state.startDate.setDate(date.getDate());
+
+    this.state.endDate.setFullYear(date.getFullYear());
+    this.state.endDate.setMonth(date.getMonth());
+    this.state.endDate.setDate(date.getDate());
   };
 
   onChangeStartTime(evt, data) {
@@ -325,6 +324,7 @@ export default class App extends React.Component {
 
   setStartTime() {
     var startDate = this.state.startDate;
+    console.log("Startzeit", this.state.startDate);
     Office.context.mailbox.item.start.setAsync(
       startDate,
       { asyncContext: { var1: 1, var2: 2 } },
@@ -349,7 +349,7 @@ export default class App extends React.Component {
         }
         else {
           console.log("Succesfully set end date.")
-        }
+        } 
       });
   }
 
@@ -357,8 +357,6 @@ export default class App extends React.Component {
   sendToServer = async () => {
     this.state.startDate.setSeconds(0);
     this.state.endDate.setSeconds(0);
-    // this.state.startDate.setMilliseconds(0);
-    // this.state.endDate.setMilliseconds(0);
     var jsonData = JSON.stringify(this.state);
     $.ajax({
       type: "POST",
@@ -549,7 +547,7 @@ export default class App extends React.Component {
       return "Bestuhlung";
     }
     else if (textKey === "startDate") {
-      return "Datum";
+      return "Zeit, Datum";
     }
     else if (textKey === "roomId") {
       return "Raum-ID";
