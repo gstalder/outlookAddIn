@@ -294,11 +294,11 @@ export default class App extends React.Component {
       console.log(`[${explicit ? 'EXPLICIT' : 'INEXPLICIT'}] ${error.name}: ${error.message}`);
     }
     try {
-      console.log(data," ", typeof data, " ", data.length);
-        const extract = (str, pattern) => (str.match(pattern) || []).pop() || '';
-        const extractAlphanum = (str) => extract(str, "[0-9a-zA-Z]+");
-        console.log("alphanum: ", extractAlphanum(data));
-        this.setState({ roomId: extractAlphanum(data) });      
+      console.log(data, " ", typeof data, " ", data.length);
+      const extract = (str, pattern) => (str.match(pattern) || []).pop() || '';
+      const extractAlphanum = (str) => extract(str, "[0-9a-zA-Z]+");
+      console.log("alphanum: ", extractAlphanum(data));
+      this.setState({ roomId: extractAlphanum(data) });
     } catch (e) {
       if (e instanceof TypeError) {
         printError(e, true);
@@ -309,21 +309,10 @@ export default class App extends React.Component {
   };
 
   copyToBody = async () => {
-    // Office.context.mailbox.item.subject.getAsync(
-    //   function (asyncResult) {
-    //     if (asyncResult.status == Office.AsyncResultStatus.Failed) {
-    //       console.log(asyncResult.error.message);
-    //     }
-    //     else {
-    //       // Successfully got the subject, display it.
-    //       console.log('The result is: ' + asyncResult.value, ", the type is: " + typeof asyncResult.value);
-    //       console.log(asyncResult.value);
-    //     }
-    //   });
-    console.log("Start Date ", this.state.startDate);
-    console.log("Start Date ", this.state.endDate);
     if (this.validateNumberOfPeople(this.state.numberOfPeople) != "") return;
     var content;
+    this.setStartTime();
+    this.setEndTime();
     content = this.prepareContent();
     Office.context.mailbox.item.body.setSelectedDataAsync(content,
       { coercionType: Office.CoercionType.Html }, function (result) {
@@ -333,6 +322,37 @@ export default class App extends React.Component {
       });
     console.log("Options inserted.");
   };
+
+  setStartTime() {
+    var startDate = this.state.startDate;
+    Office.context.mailbox.item.start.setAsync(
+      startDate,
+      { asyncContext: { var1: 1, var2: 2 } },
+      function (asyncResult) {
+        if (asyncResult.status == Office.AsyncResultStatus.Failed) {
+          console.log("Failed to set start date.");
+        }
+        else {
+          console.log("Succesfully set start date.")
+        }
+      });
+  }
+
+  setEndTime() {
+    var endDate = this.state.endDate;
+    Office.context.mailbox.item.end.setAsync(
+      endDate,
+      { asyncContext: { var1: 1, var2: 2 } },
+      function (asyncResult) {
+        if (asyncResult.status == Office.AsyncResultStatus.Failed) {
+          console.log("Failed to set end date.");
+        }
+        else {
+          console.log("Succesfully set end date.")
+        }
+      });
+  }
+
 
   sendToServer = async () => {
     this.state.startDate.setSeconds(0);
@@ -442,7 +462,7 @@ export default class App extends React.Component {
               buttonType={ButtonType.hero}
               onClick={this.copyToBody}
             >
-              In Beschreibung kopieren
+              In Termin kopieren
             </DefaultButton>
             <PrimaryButton
               className="ms-welcome__action"
