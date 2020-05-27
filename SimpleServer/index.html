@@ -1,16 +1,39 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Dev Server Bild+Ton Outlook AddIn</title>
-    <link rel="stylesheet" href="main.css">
-    <title></title>
-  </head>
-  <body>
-    <h2>Most recent JSON File</h2>
-    <p id="date"></p>
-    <div id="mostRecentJson"></div>
-    <script src="serverApp.js"></script>
-    <noscript>You need to enable JavaScript to view the full site.</noscript>
-  </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>JSON Test</title>
+</head>
+<body>
+  <h3>Neuster Termin</h3>
+  <div id="myData"></div>
+  <script>
+      fetch('most-recent-message.json')
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            appendData(data);
+        })
+        .catch(function (err) {
+            console.log('error: ' + err);
+        });
+    function appendData(data) {
+        var mainContainer = document.getElementById("myData");
+        var div = document.createElement("div");
+        div.innerHTML = 
+          'RoomId: ' + data.roomId + '<br />' + 
+          'Start: ' + new Date(data.startDate) + '<br />' + 
+          'End: ' + new Date(data.endDate) + '<br />' +
+          'Number of People: ' + data.numberOfPeople + '<br />' +
+          'Seating: ' + data.seating + '<br />' +
+          'Food: ' + data.food + '<br />' +
+          'Audio: ' + data.audio + '<br />' +
+          'Video: ' + data.video;
+        mainContainer.appendChild(div);
+    }
+  </script>
+</body>
 </html>
